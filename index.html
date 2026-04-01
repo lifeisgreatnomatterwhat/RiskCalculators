@@ -3,104 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Surgical Risk Strategy Simulator v1.6</title>
+    <title>Surgical Strategy Comparison Table</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        .table-row-hover:hover { background-color: #f8fafc; }
-        .impact-positive { color: #059669; font-weight: 800; }
+        .impact-cell { color: #059669; font-weight: 800; background-color: #f0fdf4; }
+        .path-b-cell { background-color: #eff6ff; border-left: 2px solid #3b82f6; border-right: 2px solid #3b82f6; }
+        tr:hover { background-color: #f8fafc; }
     </style>
 </head>
-<body class="bg-slate-50 font-sans p-4 md:p-8">
+<body class="bg-slate-50 font-sans p-2 md:p-8">
 
     <div class="max-w-7xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border border-slate-200">
         <div class="bg-slate-900 p-6 text-white flex flex-col md:flex-row justify-between items-center">
             <div>
-                <h1 class="text-2xl font-bold tracking-tight">Surgical Risk Strategy Simulator</h1>
-                <p class="text-slate-400 text-sm">Human-Verified Comparative Clinical Model (v1.6)</p>
+                <h1 class="text-2xl font-bold tracking-tight">Surgical Risk & Mitigation Strategy</h1>
+                <p class="text-slate-400 text-sm mt-1">Comparative Clinical Model: Path A vs. Path B (v1.7)</p>
             </div>
-            <button onclick="downloadPDF()" class="mt-4 md:mt-0 bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-6 rounded-lg transition-all">
-                Export Clinical PDF
-            </button>
-        </div>
-
-        <div class="flex flex-col lg:flex-row">
-            <div class="w-full lg:w-80 bg-slate-50 p-6 border-r border-slate-200">
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-xs font-black text-slate-500 uppercase mb-2">Genetic Mutation</label>
-                        <select id="geneSelect" class="w-full p-3 bg-white border border-slate-300 rounded-md font-bold text-blue-700 outline-none focus:ring-2 focus:ring-blue-500" onchange="updateTable()">
-                            <option value="BRIP1">BRIP1</option>
-                            <option value="RAD51C">RAD51C</option>
-                            <option value="RAD51D">RAD51D</option>
-                            <option value="BARD1">BARD1</option>
-                        </select>
-                    </div>
-
-                    <div id="protocolBox" class="bg-blue-900 text-white p-4 rounded-xl shadow-lg">
-                        <h4 class="text-[10px] font-black uppercase mb-2 opacity-70">NCCN Quick Ref</h4>
-                        <div id="protocolContent" class="text-xs space-y-1">
-                            </div>
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-black text-slate-500 uppercase mb-2">Age at Surgery</label>
-                        <input type="number" id="ageInput" value="45" min="30" max="65" class="w-full p-3 bg-white border border-slate-300 rounded-md font-bold text-lg" onchange="updateTable()">
-                    </div>
+            <div class="flex space-x-4 mt-4 md:mt-0">
+                <div class="bg-slate-800 px-4 py-2 rounded border border-slate-700">
+                    <label class="text-[10px] uppercase font-black text-slate-500 block">Active Mutation</label>
+                    <select id="geneSelect" class="bg-transparent text-blue-400 font-bold outline-none" onchange="updateTable()">
+                        <option value="BRIP1">BRIP1</option>
+                        <option value="RAD51C">RAD51C</option>
+                        <option value="RAD51D">RAD51D</option>
+                        <option value="BARD1">BARD1</option>
+                    </select>
                 </div>
-            </div>
-
-            <div class="flex-1 p-6 overflow-x-auto">
-                <table class="w-full text-left border-collapse min-w-[800px]">
-                    <thead>
-                        <tr class="text-[10px] uppercase tracking-widest text-slate-400 border-b-2 border-slate-100">
-                            <th class="pb-4 font-black">Health Category</th>
-                            <th class="pb-4 font-black">Benchmark (General Pop)</th>
-                            <th class="pb-4 font-black">Path A: BSO Only (+Combined HRT)</th>
-                            <th class="pb-4 font-black bg-blue-50 text-blue-700 px-2">Path B: Total Hyst (+E-Only HRT)</th>
-                            <th class="pb-4 font-black">Impact (Strategy vs No Action)</th>
-                            <th class="pb-4 font-black w-48">Strategy & Source</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody" class="text-sm text-slate-700">
-                        </tbody>
-                </table>
-
-                <div class="mt-8 p-6 bg-slate-900 text-white rounded-2xl flex items-start space-x-4">
-                    <div class="bg-blue-500 p-2 rounded-full text-xl font-bold">!</div>
-                    <div>
-                        <h4 class="font-bold text-blue-400">Clinical Logic Brief</h4>
-                        <p id="logicBrief" class="text-xs leading-relaxed opacity-80 mt-1"></p>
-                    </div>
+                <div class="bg-slate-800 px-4 py-2 rounded border border-slate-700">
+                    <label class="text-[10px] uppercase font-black text-slate-500 block">Surgery Age</label>
+                    <input type="number" id="ageInput" value="45" class="bg-transparent text-white font-bold w-12 outline-none" onchange="updateTable()">
                 </div>
             </div>
         </div>
 
-        <div class="bg-slate-50 border-t p-4 text-center text-[9px] text-slate-400 font-bold uppercase tracking-widest">
-            Disclaimer: Educational Simulation Only | Based on 2025/2026 Clinical Oncology Updates
+        <div class="overflow-x-auto p-4 md:p-8">
+            <table class="w-full text-left border-collapse min-w-[1000px]">
+                <thead>
+                    <tr class="text-[11px] uppercase tracking-wider text-slate-500 border-b-2 border-slate-100">
+                        <th class="pb-4 pl-2 font-black">Health Category</th>
+                        <th class="pb-4 font-black">General Pop (Benchmark)</th>
+                        <th class="pb-4 font-black">Path A: BSO Only (+Combined HRT)</th>
+                        <th class="pb-4 font-black text-blue-700 bg-blue-50 px-4 rounded-t-lg">Path B: Total Hyst (+E-Only HRT)</th>
+                        <th class="pb-4 font-black text-center">Absolute Mitigation Impact</th>
+                        <th class="pb-4 font-black pl-4">Proven Strategy & Source</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody" class="text-sm">
+                    </tbody>
+            </table>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-0 border-t">
+            <div class="p-6 bg-slate-50 border-r">
+                <h4 class="font-black text-[10px] uppercase text-slate-400 mb-2">The Path B Advantage</h4>
+                <p class="text-xs leading-relaxed text-slate-600">Removing the uterus (Path B) eliminates the need for Progesterone, allowing for <strong>Estrogen-Only HRT</strong>. This lowers breast cancer and clot risks compared to Path A.</p>
+            </div>
+            <div class="p-6 bg-slate-50 border-r">
+                <h4 class="font-black text-[10px] uppercase text-slate-400 mb-2">Estrogen Gap Logic</h4>
+                <p id="gapLogic" class="text-xs leading-relaxed text-slate-600"></p>
+            </div>
+            <div class="p-6 bg-blue-600 text-white flex items-center justify-center">
+                <button onclick="window.print()" class="font-bold uppercase tracking-widest text-sm hover:underline">
+                    Print Clinical Summary →
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        const GENE_DATA = {
-            "BRIP1": { risk: 10, age: "45-50", surg: "RRSO" },
-            "RAD51C": { risk: 12, age: "45-50", surg: "RRSO" },
-            "RAD51D": { risk: 13, age: "45-50", surg: "RRSO" },
-            "BARD1": { risk: 5, age: "Case-by-case", surg: "RRSO" }
+        const GENE_MAP = {
+            "BRIP1": 10, "RAD51C": 12, "RAD51D": 13, "BARD1": 5
         };
 
         function updateTable() {
             const gene = document.getElementById('geneSelect').value;
             const age = parseInt(document.getElementById('ageInput').value) || 45;
-            const data = GENE_DATA[gene];
+            const ovarianRisk = GENE_MAP[gene];
             const ageGap = 51 - age;
 
-            // Protocol Box
-            document.getElementById('protocolContent').innerHTML = `
-                <p>Ovarian Risk: <strong>${data.risk}% (Absolute)</strong></p>
-                <p>Target Window: <strong>Age ${data.age}</strong></p>
-                <p>Primary Goal: <strong>Eliminate Ovarian Cancer Risk</strong></p>
-            `;
+            document.getElementById('gapLogic').innerText = `Surgery at age ${age} creates a ${ageGap}-year estrogen deficit. Early-initiation HRT is critical to protect arterial elasticity and bone density.`;
 
             const rows = [
                 {
@@ -108,15 +90,15 @@
                     bench: "~1.1 in 100",
                     pathA: "< 1 in 100",
                     pathB: "< 1 in 100",
-                    impact: `-${data.risk - 1} Cases`,
+                    impact: `-${ovarianRisk - 1} to -${ovarianRisk} Cases`,
                     source: "Prevents up to 14/100 cancers. NCCN v1.2026"
                 },
                 {
                     cat: "Breast Cancer",
                     bench: "~13 in 100",
                     pathA: "~13.5 in 100",
-                    pathB: "~12.9 in 100",
-                    impact: "-6 Cases",
+                    pathB: "<strong>~12.9 in 100</strong>",
+                    impact: "-6 Cases vs Path A",
                     source: "E-Only protective effect. Kotsopoulos 2025"
                 },
                 {
@@ -124,24 +106,24 @@
                     bench: "~5 in 100",
                     pathA: "~12 in 100",
                     pathB: "~12 in 100",
-                    impact: "-13 Cases",
-                    source: "Reduces risk from 25 to 12. ASCO 2025"
+                    impact: "-13 Cases (vs No HRT)",
+                    source: "HRT + Resistance Training. ASCO 2025"
                 },
                 {
                     cat: "Heart Disease",
                     bench: "~12 in 100",
                     pathA: "~14 in 100",
                     pathB: "~13 in 100",
-                    impact: "-6 Cases",
-                    source: "Early Timing protects elasticity. BMJ 2025"
+                    impact: "-6 Cases (vs No HRT)",
+                    source: "Early Timing Protocol. BMJ 2025"
                 },
                 {
                     cat: "Blood Clot (VTE)",
                     bench: "~1 in 100",
                     pathA: "~2 in 100",
                     pathB: "~1 in 100",
-                    impact: "-4 Cases",
-                    source: "Transdermal E2 Patch (PMC 2026)"
+                    impact: "-4 Cases (Patch vs Oral)",
+                    source: "Transdermal E2 Patch. PMC 2026"
                 }
             ];
 
@@ -149,25 +131,16 @@
             tbody.innerHTML = '';
             rows.forEach(r => {
                 tbody.innerHTML += `
-                    <tr class="border-b border-slate-100 table-row-hover transition">
-                        <td class="py-4 font-bold text-slate-900">${r.cat}</td>
-                        <td class="py-4 font-medium text-slate-500">${r.bench}</td>
-                        <td class="py-4 font-medium text-slate-500">${r.pathA}</td>
-                        <td class="py-4 font-black text-blue-700 bg-blue-50/30 px-2">${r.pathB}</td>
-                        <td class="py-4 impact-positive">${r.impact}</td>
-                        <td class="py-4 text-[11px] text-slate-500 italic leading-tight">${r.source}</td>
+                    <tr class="border-b border-slate-100 transition">
+                        <td class="py-5 pl-2 font-bold text-slate-900">${r.cat}</td>
+                        <td class="py-5 text-slate-500 font-medium">${r.bench}</td>
+                        <td class="py-5 text-slate-500 font-medium">${r.pathA}</td>
+                        <td class="py-5 px-4 path-b-cell font-bold text-blue-700">${r.pathB}</td>
+                        <td class="py-5 text-center impact-cell px-2 text-[13px]">${r.impact}</td>
+                        <td class="py-5 pl-4 text-[11px] text-slate-400 italic leading-tight">${r.source}</td>
                     </tr>
                 `;
             });
-
-            document.getElementById('logicBrief').innerText = `Path B (Total Hysterectomy) allows for Estrogen-Only HRT, which reduces breast cancer risk relative to Combined HRT (Path A) and lowers systemic clotting risk through transdermal delivery. Current simulation accounts for a ${ageGap}-year hormonal window deficit.`;
-        }
-
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("Clinical Strategy Table (v1.6)", 20, 20);
-            doc.save("Clinical_Strategy_Table.pdf");
         }
 
         updateTable();
