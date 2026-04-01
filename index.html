@@ -15,11 +15,11 @@
 </head>
 <body class="bg-gray-100 font-sans p-4 md:p-12">
 
-    <div class="max-w-5xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-2xl overflow-hidden border border-gray-200">
         <div class="bg-slate-900 p-8 text-white flex flex-col md:flex-row justify-between items-center">
             <div>
-                <h1 class="text-3xl font-extrabold">Surgical Risk Simulator</h1>
-                <p class="text-slate-400 mt-2 text-sm italic">Evaluating surgery options for gene mutation carriers.</p>
+                <h1 class="text-3xl font-extrabold tracking-tight">Surgical Risk Simulator</h1>
+                <p class="text-slate-400 mt-2 text-sm italic">Clinical decision support for gene mutation carriers.</p>
             </div>
             <button onclick="downloadPDF()" class="mt-6 md:mt-0 bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition-all">
                 Download Physician Guide
@@ -28,93 +28,66 @@
 
         <div class="grid md:grid-cols-12">
             <div class="md:col-span-4 bg-slate-50 p-8 border-r border-gray-100">
-                <div class="space-y-8">
+                <div class="space-y-6">
+                    
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Genetic Mutation</label>
-                        <select id="geneSelect" class="w-full p-3 bg-white border-2 border-blue-100 rounded-md font-bold text-blue-700 outline-none focus:border-blue-500" onchange="runSim()">
-                            <option value="BRIP1">BRIP1 (5-15% Risk)</option>
-                            <option value="RAD51C">RAD51C (5-15% Risk)</option>
-                            <option value="RAD51D">RAD51D (10-15% Risk)</option>
-                            <option value="BARD1">BARD1 (Increased Risk)</option>
-                            <option value="GENERAL">General Population (1.1%)</option>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Genetic Mutation</label>
+                        <select id="geneSelect" class="w-full p-3 bg-white border-2 border-blue-100 rounded-md font-bold text-blue-700 outline-none focus:border-blue-500 shadow-sm" onchange="runSim()">
+                            <option value="BRIP1">BRIP1</option>
+                            <option value="RAD51C">RAD51C</option>
+                            <option value="RAD51D">RAD51D</option>
+                            <option value="BARD1">BARD1</option>
+                            <option value="GENERAL">General Population</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">Age at Surgery</label>
-                        <input type="number" id="ageInput" value="45" min="30" max="60" class="w-full p-3 bg-white border-2 border-gray-200 rounded-md font-bold text-lg outline-none focus:border-blue-500" onchange="runSim()">
+                    <div id="protocolBox" class="bg-white border-2 border-slate-200 p-4 rounded-xl shadow-sm">
+                        <h4 class="text-[10px] font-black text-slate-400 uppercase mb-2 tracking-widest">Clinical Protocol Reference</h4>
+                        <div id="protocolContent" class="space-y-2">
+                            </div>
                     </div>
 
-                    <div class="space-y-5 pt-4 border-t">
-                        <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="surgToggle" class="w-5 h-5 text-blue-600" onchange="runSim()"> <span class="font-medium text-gray-700">Surgery (Path B: Hyst + BSO)</span></label>
-                        <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="hrtToggle" class="w-5 h-5 text-blue-600" onchange="runSim()"> <span class="font-medium text-gray-700">Mitigation: Estrogen HRT</span></label>
-                        <label class="flex items-center space-x-3 cursor-pointer"><input type="checkbox" id="exToggle" class="w-5 h-5 text-blue-600" onchange="runSim()"> <span class="font-medium text-gray-700">Mitigation: Lifting Weights</span></label>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2 uppercase tracking-wider">Age at Surgery</label>
+                        <input type="number" id="ageInput" value="45" min="30" max="65" class="w-full p-3 bg-white border-2 border-gray-200 rounded-md font-bold text-lg outline-none focus:border-blue-500 shadow-sm" onchange="runSim()">
+                    </div>
+
+                    <div class="space-y-4 pt-4 border-t border-slate-200">
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="surgToggle" class="w-5 h-5 text-blue-600 rounded" onchange="runSim()">
+                            <span class="font-medium text-gray-700 group-hover:text-blue-600 transition">Surgery: Path B (Hyst+BSO)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="hrtToggle" class="w-5 h-5 text-blue-600 rounded" onchange="runSim()">
+                            <span class="font-medium text-gray-700 group-hover:text-blue-600 transition">Mitigation: Estrogen HRT</span>
+                        </label>
+                        <label class="flex items-center space-x-3 cursor-pointer group">
+                            <input type="checkbox" id="exToggle" class="w-5 h-5 text-blue-600 rounded" onchange="runSim()">
+                            <span class="font-medium text-gray-700 group-hover:text-blue-600 transition">Mitigation: Lifting Weights</span>
+                        </label>
                     </div>
                 </div>
             </div>
 
             <div class="md:col-span-8 p-8 md:p-12">
-                <h3 class="text-gray-500 uppercase tracking-widest text-xs font-bold mb-8">Absolute Risk (per 100 Women)</h3>
+                <h3 class="text-gray-500 uppercase tracking-widest text-[10px] font-black mb-8">Absolute Risk (per 100 Women by Age 65)</h3>
                 <div class="space-y-10" id="bars">
                     </div>
 
-                <div id="strategy-box" class="mt-12 p-6 rounded-xl border-l-8 border-blue-500 bg-blue-50 text-blue-900">
-                    <p id="insight-text" class="italic">Select a mutation and age to begin.</p>
+                <div id="strategy-box" class="mt-12 p-6 rounded-xl border-l-8 border-blue-500 bg-blue-50 text-blue-900 shadow-sm">
+                    <p id="insight-text" class="italic text-sm leading-relaxed"></p>
                 </div>
             </div>
+        </div>
+
+        <div class="bg-gray-50 border-t border-gray-200 p-4 text-center">
+            <p class="text-[9px] text-gray-400 uppercase tracking-widest font-bold">
+                NCCN v1.2026 | Kotsopoulos 2025 | PROMPT Registry Updates | Not Medical Advice
+            </p>
         </div>
     </div>
 
     <script>
-        const GENE_RISKS = {
-            "BRIP1": 10, "RAD51C": 12, "RAD51D": 13, "BARD1": 5, "GENERAL": 1.1
-        };
-
-        function runSim() {
-            const gene = document.getElementById('geneSelect').value;
-            const age = parseInt(document.getElementById('ageInput').value) || 45;
-            const isSurg = document.getElementById('surgToggle').checked;
-            const isHrt = document.getElementById('hrtToggle').checked;
-            const isEx = document.getElementById('exToggle').checked;
-
-            const baseOvarian = GENE_RISKS[gene];
-            const ageGap = 51 - age; // Estrogen loss duration
-            
-            // Logic for Unmanaged Risks (Scaling with age gap)
-            const unmanagedBone = Math.round(5 + (20 * (ageGap / 6)));
-            const unmanagedHeart = Math.round(12 + (7 * (ageGap / 6)));
-
-            const results = [
-                { id: 'ovarian', label: 'Ovarian Cancer', val: isSurg ? 0.5 : baseOvarian, base: baseOvarian },
-                { id: 'bone', label: 'Bone Fracture', val: isSurg ? (isHrt ? (isEx ? 12 : 14) : unmanagedBone) : 5, base: 5 },
-                { id: 'breast', label: 'Breast Cancer', val: isSurg ? (isHrt ? 12.9 : 19) : 13, base: 13 },
-                { id: 'heart', label: 'Heart Disease', val: isSurg ? (isHrt ? 13 : unmanagedHeart) : 12, base: 12 }
-            ];
-
-            const container = document.getElementById('bars');
-            container.innerHTML = '';
-            results.forEach(r => {
-                const color = isSurg ? (r.val > r.base ? 'bg-unmanaged' : 'bg-managed') : 'bg-baseline';
-                container.innerHTML += `
-                    <div>
-                        <div class="flex justify-between mb-2"><span class="font-bold text-slate-800">${r.label}</span><span class="font-black">${r.val}/100</span></div>
-                        <div class="w-full bg-gray-100 h-7 rounded-full overflow-hidden"><div class="risk-bar ${color}" style="width: ${Math.min(r.val, 100)}%"></div></div>
-                    </div>`;
-            });
-
-            document.getElementById('insight-text').innerHTML = isSurg 
-                ? `Surgery at ${age} eliminates the ${baseOvarian}/100 ovarian risk, but adds a ${ageGap}-year hormonal deficit. ${isHrt ? 'Mitigation is successfully managing systemic health.' : 'Systemic risks are currently unmanaged.'}`
-                : `Currently showing ${gene} risk without surgery.`;
-        }
-
-        function downloadPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            doc.text("Surgical Risk Simulation Report", 20, 20);
-            doc.text(`Mutation: ${document.getElementById('geneSelect').value} | Age: ${document.getElementById('ageInput').value}`, 20, 30);
-            doc.save("Health_Strategy.pdf");
-        }
-        runSim();
-    </script>
-</body>
-</html>
+        const GENE_DATA = {
+            "BRIP1": { risk: 10, range: "5-15%", age: "45-50", surg: "RRSO (BSO)" },
+            "
